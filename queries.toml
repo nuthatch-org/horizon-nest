@@ -1,0 +1,47 @@
+# The author-sanctioned public query ceiling for the Horizon Nuthatch nest.
+# Operators may narrow this surface, never widen it.
+
+[[queries]]
+name = "top_indexers"
+sql = '''
+SELECT "indexer", rewards, query_fees, active_allocations
+FROM indexers
+ORDER BY active_allocations DESC, "indexer"
+LIMIT {n}
+'''
+params = { n = "int" }
+
+[[queries]]
+name = "indexer"
+sql = '''
+SELECT "indexer", rewards, query_fees, active_allocations
+FROM indexers
+WHERE lower("indexer") = lower({address})
+'''
+params = { address = "address" }
+
+[[queries]]
+name = "active_allocations"
+sql = '''
+SELECT "allocationId", "indexer", "subgraphDeploymentId", tokens
+FROM allocations
+WHERE status = 'active'
+ORDER BY tokens DESC
+LIMIT {n}
+'''
+params = { n = "int" }
+
+[[queries]]
+name = "delegations_for_indexer"
+sql = '''
+SELECT "indexer", "delegator", tokens
+FROM delegations
+WHERE lower("indexer") = lower({address})
+ORDER BY tokens DESC
+LIMIT {n}
+'''
+params = { address = "address", n = "int" }
+
+[[queries]]
+name = "network_totals"
+sql = "SELECT * FROM global"
